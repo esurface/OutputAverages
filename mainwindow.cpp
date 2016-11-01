@@ -26,10 +26,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::showError(QString errString)
+void MainWindow::showMessage(QString msgString)
 {
     QMessageBox msgBox;
-    msgBox.setText(errString);
+    msgBox.setText(msgString);
     msgBox.exec();
 }
 
@@ -46,6 +46,8 @@ void MainWindow::on_inputBrowseButton_clicked()
             ui->inputFileLabel->setText(fileList.first());
         }
     }
+
+    delete(fileDialog);
 }
 
 void MainWindow::on_goButton_clicked()
@@ -64,27 +66,12 @@ void MainWindow::on_goButton_clicked()
 
     parseFile();
 }
-
-void MainWindow::on_outputBrowseButton_clicked()
+void MainWindow::saveFile(QString fileName)
 {
-    // File Dialog accepts one file with suffix *.in or *.out
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setFileMode(QFileDialog::AnyFile);
-
-    if(fileDialog->exec()) {
-        QStringList fileList = fileDialog->selectedFiles();
-        if (!fileList.isEmpty()) {
-            ui->outputFileLabel->setText(fileList.first());
-        }
-    }
-}
-
-void MainWindow::on_saveButton_clicked()
-{
-    QFile file(ui->outputFileLabel->text());
+    QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        showError(QString("Failed to save the output file. Try again."));
+        showMessage(QString("Failed to save the output file. Try again."));
         return;
     }
 
@@ -126,6 +113,27 @@ void MainWindow::on_saveButton_clicked()
     }
     file.write(out->toUtf8());
     file.close();
+
+    showMessage("File saved successfully.");
+
+    delete(out);
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+    // File Dialog accepts one file with suffix *.in or *.out
+    QFileDialog *fileDialog = new QFileDialog(this);
+    fileDialog->setFileMode(QFileDialog::AnyFile);
+    fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+
+    QStringList fileList;
+    if(fileDialog->exec()) {
+        fileList = fileDialog->selectedFiles();
+        if (!fileList.isEmpty())
+            saveFile(fileList.first());
+    }
+
+    delete(fileDialog);
 }
 
 void MainWindow::update()
@@ -141,15 +149,14 @@ void MainWindow::update()
         ui->goButton->setEnabled(false);
     }
 
-    if (ui->avgAgeAtDeath->text().isEmpty() ||
-        ui->avgCostPerYear->text().isEmpty() ||
-        ui->avgMonthsToDeath->text().isEmpty() ||
-        ui->avgTotalCost_CB->text().isEmpty() ||
-        ui->outputFileLabel->text().isEmpty()) {
-        ui->saveButton->setEnabled(false);
-    } else {
-        // Enable the save button when we have data an a file
+    if (!ui->avgAgeAtDeath->text().isEmpty() ||
+        !ui->avgCostPerYear->text().isEmpty() ||
+        !ui->avgMonthsToDeath->text().isEmpty() ||
+        !ui->avgTotalCost->text().isEmpty()) {
         ui->saveButton->setEnabled(true);
+    } else {
+        // Enable the save button when we have data
+        ui->saveButton->setEnabled(false);
     }
 }
 
@@ -213,7 +220,7 @@ void MainWindow::parseFile()
     QFile file(ui->inputFileLabel->text());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        showError(QString("Enter a proper *.in or *.out file"));
+        showMessage(QString("Enter a proper *.in or *.out file"));
         ui->inputFileLabel->selectAll();
         ui->inputFileLabel->setFocus();
         return;
@@ -222,7 +229,7 @@ void MainWindow::parseFile()
     QTextStream in(&file);
     if (in.atEnd())
     {
-        showError(QString("The provided file is empty."));
+        showMessage(QString("The provided file is empty."));
         ui->inputFileLabel->selectAll();
         ui->inputFileLabel->setFocus();
         return;

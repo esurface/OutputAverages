@@ -18,8 +18,6 @@ public:
 private slots:
     void on_inputBrowseButton_clicked();
     void on_goButton_clicked();
-
-    void on_outputBrowseButton_clicked();
     void on_saveButton_clicked();
 
     void update();
@@ -29,7 +27,8 @@ private:
 
     void runStats();
     void parseFile();
-    void showError(QString errString);
+    void showMessage(QString msgString);
+    void saveFile(QString filename);
 };
 
 #endif // MAINWINDOW_H

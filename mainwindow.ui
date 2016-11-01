@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>550</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>520</width>
-    <height>550</height>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>520</width>
-    <height>550</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
       <x>10</x>
       <y>10</y>
       <width>501</width>
-      <height>511</height>
+      <height>451</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -58,7 +58,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Choose the output(s) to return:</string>
+        <string>Choose the output(s) to calculate:</string>
        </property>
       </widget>
      </item>
@@ -357,31 +357,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Choose a file for save the outputs:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QLineEdit" name="outputFileLabel">
-         <property name="text">
-          <string>output.txt</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="outputBrowseButton">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <property name="topMargin">
         <number>0</number>
@@ -493,22 +468,6 @@
     <hint type="destinationlabel">
      <x>281</x>
      <y>236</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>outputFileLabel</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>saveButton</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>217</x>
-     <y>471</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>51</x>
-     <y>501</y>
     </hint>
    </hints>
   </connection>
