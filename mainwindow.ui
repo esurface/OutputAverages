@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>473</height>
+    <width>520</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,18 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>520</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>520</width>
+    <height>550</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Output Averages</string>
@@ -26,7 +38,7 @@
       <x>10</x>
       <y>10</y>
       <width>501</width>
-      <height>441</height>
+      <height>511</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -42,43 +54,6 @@
         <string>Inputs:</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Choose an input file:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLineEdit" name="fileLabel"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="browseButton">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>10</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -144,12 +119,33 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Choose an input file:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="inputFileLabel"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="inputBrowseButton">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <property name="topMargin">
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="okButton">
+        <widget class="QPushButton" name="goButton">
          <property name="text">
           <string>Go</string>
          </property>
@@ -245,6 +241,16 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="avgMonthsToDeath">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
@@ -292,16 +298,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="avgMonthsToDeath">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="2">
         <widget class="QLabel" name="sdMonthsToDeath">
          <property name="text">
@@ -341,6 +337,74 @@
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Choose a file for save the outputs:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLineEdit" name="outputFileLabel">
+         <property name="text">
+          <string>output.txt</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="outputBrowseButton">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="saveButton">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -417,7 +481,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>fileLabel</sender>
+   <sender>inputFileLabel</sender>
    <signal>textChanged(QString)</signal>
    <receiver>MainWindow</receiver>
    <slot>update()</slot>
@@ -429,6 +493,22 @@
     <hint type="destinationlabel">
      <x>281</x>
      <y>236</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>outputFileLabel</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>saveButton</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>471</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>51</x>
+     <y>501</y>
     </hint>
    </hints>
   </connection>

@@ -1,11 +1,8 @@
-=============================
-HVL: HVLvlo = 0 - 20
-     HVL_lo = 20 - 500
-     HVLmlo = 500 - 3k
-     HVLmed = 3k - 10k
-     HVLmhi = 10k - 30k
-     HVL_hi = 30k - 100k
-     HVLvhi = > 100k
+Number of months until death:	74.98	52.5923
+Total cost to treat a person:	3109.39	2557.86
+Cost per years of life lived:	39.0631	15.8117
+Age of the patient at death:	490.92	109.049
+ HVLvhi = > 100k
 =============================
 CD4: CD4vlo = 0 - 50
      CD4_lo = 50 - 100

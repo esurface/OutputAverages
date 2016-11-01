@@ -16,8 +16,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_browseButton_clicked();
-    void on_okButton_clicked();
+    void on_inputBrowseButton_clicked();
+    void on_goButton_clicked();
+
+    void on_outputBrowseButton_clicked();
+    void on_saveButton_clicked();
+
     void update();
 
 private:

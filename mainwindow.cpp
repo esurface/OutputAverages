@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QVector>
+#include <QMessageBox>
 
 #include "stats.h"
 
@@ -25,19 +26,106 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_browseButton_clicked()
+void MainWindow::showError(QString errString)
 {
-    // init file dialog
+    QMessageBox msgBox;
+    msgBox.setText(errString);
+    msgBox.exec();
+}
+
+void MainWindow::on_inputBrowseButton_clicked()
+{
+    // File Dialog accepts one file with suffix *.in or *.out
     QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setNameFilter("*.in *.out");
+    fileDialog->setFileMode(QFileDialog::ExistingFile);
 
     if(fileDialog->exec()) {
         QStringList fileList = fileDialog->selectedFiles();
         if (!fileList.isEmpty()) {
-            ui->fileLabel->setText(fileList.first());
+            ui->inputFileLabel->setText(fileList.first());
         }
-
     }
+}
+
+void MainWindow::on_goButton_clicked()
+{
+    ui->avgMonthsToDeath->clear();
+    ui->sdMonthsToDeath->clear();
+
+    ui->avgTotalCost->clear();
+    ui->sdTotalCost->clear();
+
+    ui->avgCostPerYear->clear();
+    ui->sdCostPerYear->clear();
+
+    ui->avgAgeAtDeath->clear();
+    ui->sdAgeAtDeath->clear();
+
+    parseFile();
+}
+
+void MainWindow::on_outputBrowseButton_clicked()
+{
+    // File Dialog accepts one file with suffix *.in or *.out
+    QFileDialog *fileDialog = new QFileDialog(this);
+    fileDialog->setFileMode(QFileDialog::AnyFile);
+
+    if(fileDialog->exec()) {
+        QStringList fileList = fileDialog->selectedFiles();
+        if (!fileList.isEmpty()) {
+            ui->outputFileLabel->setText(fileList.first());
+        }
+    }
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+    QFile file(ui->outputFileLabel->text());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        showError(QString("Failed to save the output file. Try again."));
+        return;
+    }
+
+    QString *out = new QString();
+    if (ui->avgMonthsToDeath_CB->isChecked())
+    {
+        out->append("Number of months until death:\t");
+        out->append(ui->avgMonthsToDeath->text());
+        out->append("\t");
+        out->append(ui->sdMonthsToDeath->text());
+        out->append("\n");
+    }
+
+    if (ui->avgTotalCost_CB->isChecked())
+    {
+        out->append("Total cost to treat a person:\t");
+        out->append(ui->avgTotalCost->text());
+        out->append("\t");
+        out->append(ui->sdTotalCost->text());
+        out->append("\n");
+    }
+
+    if (ui->avgCostPerYear_CB->isChecked())
+    {
+        out->append("Cost per years of life lived:\t");
+        out->append(ui->avgCostPerYear->text());
+        out->append("\t");
+        out->append(ui->sdCostPerYear->text());
+        out->append("\n");
+    }
+
+    if (ui->avgAgeAtDeath_CB->isChecked())
+    {
+        out->append("Age of the patient at death:\t");
+        out->append(ui->avgAgeAtDeath->text());
+        out->append("\t");
+        out->append(ui->sdAgeAtDeath->text());
+        out->append("\n");
+    }
+    file.write(out->toUtf8());
+    file.close();
 }
 
 void MainWindow::update()
@@ -46,10 +134,22 @@ void MainWindow::update()
         ui->avgCostPerYear_CB->isChecked() ||
         ui->avgMonthsToDeath_CB->isChecked() ||
         ui->avgTotalCost_CB->isChecked()) &&
-        !ui->fileLabel->text().isEmpty()) {
-        ui->okButton->setEnabled(true);
+        !ui->inputFileLabel->text().isEmpty()) {
+        // Enable the go button when a least on box is check and we have a file
+        ui->goButton->setEnabled(true);
     } else {
-        ui->okButton->setEnabled(false);
+        ui->goButton->setEnabled(false);
+    }
+
+    if (ui->avgAgeAtDeath->text().isEmpty() ||
+        ui->avgCostPerYear->text().isEmpty() ||
+        ui->avgMonthsToDeath->text().isEmpty() ||
+        ui->avgTotalCost_CB->text().isEmpty() ||
+        ui->outputFileLabel->text().isEmpty()) {
+        ui->saveButton->setEnabled(false);
+    } else {
+        // Enable the save button when we have data an a file
+        ui->saveButton->setEnabled(true);
     }
 }
 
@@ -104,25 +204,37 @@ void MainWindow::runStats()
         ui->avgAgeAtDeath->setText(QString::number(a_ageAtDeath));
         ui->sdAgeAtDeath->setText(QString::number(sd_ageAtDeath));
     }
-}
 
-void MainWindow::showError(QString errString)
-{
-    //
+    update();
 }
 
 void MainWindow::parseFile()
 {
-    QFile file(ui->fileLabel->text());
+    QFile file(ui->inputFileLabel->text());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         showError(QString("Enter a proper *.in or *.out file"));
+        ui->inputFileLabel->selectAll();
+        ui->inputFileLabel->setFocus();
         return;
     }
 
+    QTextStream in(&file);
+    if (in.atEnd())
+    {
+        showError(QString("The provided file is empty."));
+        ui->inputFileLabel->selectAll();
+        ui->inputFileLabel->setFocus();
+        return;
+    }
+
+    v_monthsToDeath.clear();
+    v_totalCost.clear();
+    v_costPerYear.clear();
+    v_ageAtDeath.clear();
+
     int initAge = 0;
 
-    QTextStream in(&file);
     while (!in.atEnd()) {
         QString ba = in.readLine();
 
@@ -151,21 +263,4 @@ void MainWindow::parseFile()
     }
 
     runStats();
-}
-
-void MainWindow::on_okButton_clicked()
-{
-    ui->avgMonthsToDeath->clear();
-    ui->sdMonthsToDeath->clear();
-
-    ui->avgTotalCost->clear();
-    ui->sdTotalCost->clear();
-
-    ui->avgCostPerYear->clear();
-    ui->sdCostPerYear->clear();
-
-    ui->avgAgeAtDeath->clear();
-    ui->sdAgeAtDeath->clear();
-
-    parseFile();
 }
