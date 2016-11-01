@@ -3,8 +3,14 @@
 
 #include <QFileDialog>
 #include <QTextStream>
+#include <QVector>
 
-QString *chosenFile;
+#include "stats.h"
+
+QVector<double> v_monthsToDeath;
+QVector<double> v_totalCost;
+QVector<double> v_costPerYear;
+QVector<double> v_ageAtDeath;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,7 +35,6 @@ void MainWindow::on_browseButton_clicked()
         QStringList fileList = fileDialog->selectedFiles();
         if (!fileList.isEmpty()) {
             ui->fileLabel->setText(fileList.first());
-            chosenFile = new QString(fileList.first());
         }
 
     }
@@ -42,24 +47,79 @@ void MainWindow::update()
         ui->avgMonthsToDeath_CB->isChecked() ||
         ui->avgTotalCost_CB->isChecked()) &&
         !ui->fileLabel->text().isEmpty()) {
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        ui->okButton->setEnabled(true);
     } else {
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        ui->okButton->setEnabled(false);
     }
-
 }
 
-void MainWindow::on_buttonBox_accepted()
+void MainWindow::runStats()
 {
-    QFile file(*chosenFile);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
+    double a_monthsToDeath = 0.0;
+    double a_totalCost = 0.0;
+    double a_costPerYear = 0.0;
+    double a_ageAtDeath = 0.0;
 
-    double t_monthsToDeath = 0.0;
-    double t_totalCost = 0.0;
-    double t_costPerYear = 0.0;
-    double t_ageAtDeath = 0.0;
-    double n_patients = 0.0;
+    double sd_monthsToDeath = 0.0;
+    double sd_totalCost = 0.0;
+    double sd_costPerYear = 0.0;
+    double sd_ageAtDeath = 0.0;
+
+    Stats stats = Stats(v_monthsToDeath);
+    a_monthsToDeath = stats.getMean();
+    sd_monthsToDeath = stats.getStdDev();
+
+    stats = Stats(v_totalCost);
+    a_totalCost = stats.getMean();
+    sd_totalCost = stats.getStdDev();
+
+    stats = Stats(v_costPerYear);
+    a_costPerYear = stats.getMean();
+    sd_costPerYear = stats.getStdDev();
+
+    stats = Stats(v_ageAtDeath);
+    a_ageAtDeath = stats.getMean();
+    sd_ageAtDeath = stats.getStdDev();
+
+    if (ui->avgMonthsToDeath_CB->isChecked())
+    {
+        ui->avgMonthsToDeath->setText(QString::number(a_monthsToDeath));
+        ui->sdMonthsToDeath->setText(QString::number(sd_monthsToDeath));
+    }
+
+    if (ui->avgTotalCost_CB->isChecked())
+    {
+        ui->avgTotalCost->setText(QString::number(a_totalCost));
+        ui->sdTotalCost->setText(QString::number(sd_totalCost));
+    }
+
+    if (ui->avgCostPerYear_CB->isChecked())
+    {
+        ui->avgCostPerYear->setText(QString::number(a_costPerYear));
+        ui->sdCostPerYear->setText(QString::number(sd_costPerYear));
+    }
+
+    if (ui->avgAgeAtDeath_CB->isChecked())
+    {
+        ui->avgAgeAtDeath->setText(QString::number(a_ageAtDeath));
+        ui->sdAgeAtDeath->setText(QString::number(sd_ageAtDeath));
+    }
+}
+
+void MainWindow::showError(QString errString)
+{
+    //
+}
+
+void MainWindow::parseFile()
+{
+    QFile file(ui->fileLabel->text());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        showError(QString("Enter a proper *.in or *.out file"));
+        return;
+    }
+
     int initAge = 0;
 
     QTextStream in(&file);
@@ -68,10 +128,8 @@ void MainWindow::on_buttonBox_accepted()
 
         if (ba.startsWith(QByteArray("BEGIN PATIENT")))
         {
-            n_patients++;
             initAge = 0;
         }
-
 
         if (ba.startsWith(QByteArray("  gender: ")))
         {
@@ -85,25 +143,29 @@ void MainWindow::on_buttonBox_accepted()
             double lms = split.at(3).toDouble();
             double cost = split.at(7).toDouble();
 
-            t_monthsToDeath += lms;
-            t_totalCost += cost;
-            t_costPerYear += (cost)/(lms);
-            t_ageAtDeath += (initAge + lms);
+            v_monthsToDeath.append(lms);
+            v_totalCost.append(cost);
+            v_costPerYear.append((cost)/(lms));
+            v_ageAtDeath.append((initAge + lms));
         }
     }
 
-    double a_monthsToDeath = 0.0;
-    double a_totalCost = 0.0;
-    double a_costPerYear = 0.0;
-    double a_ageAtDeath = 0.0;
+    runStats();
+}
 
-    a_monthsToDeath = t_monthsToDeath / n_patients;
-    a_totalCost = t_totalCost / n_patients;
-    a_costPerYear = t_costPerYear / n_patients;
-    a_ageAtDeath = t_ageAtDeath / n_patients;
+void MainWindow::on_okButton_clicked()
+{
+    ui->avgMonthsToDeath->clear();
+    ui->sdMonthsToDeath->clear();
 
-    ui->avgMonthsToDeath->setText(QString::number(a_monthsToDeath));
-    ui->avgTotalCost->setText(QString::number(a_totalCost));
-    ui->avgCostPerYear->setText(QString::number(a_costPerYear));
-    ui->avgAgeAtDeath->setText(QString::number(a_ageAtDeath));
+    ui->avgTotalCost->clear();
+    ui->sdTotalCost->clear();
+
+    ui->avgCostPerYear->clear();
+    ui->sdCostPerYear->clear();
+
+    ui->avgAgeAtDeath->clear();
+    ui->sdAgeAtDeath->clear();
+
+    parseFile();
 }

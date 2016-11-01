@@ -17,11 +17,15 @@ public:
 
 private slots:
     void on_browseButton_clicked();
-    void on_buttonBox_accepted();
+    void on_okButton_clicked();
     void update();
 
 private:
     Ui::MainWindow *ui;
+
+    void runStats();
+    void parseFile();
+    void showError(QString errString);
 };
 
 #endif // MAINWINDOW_H
