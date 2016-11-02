@@ -6,6 +6,8 @@
 #include <QVector>
 #include <QMessageBox>
 
+#include <cmath>
+
 #include "stats.h"
 
 QVector<double> v_monthsToDeath;
@@ -160,6 +162,21 @@ void MainWindow::update()
     }
 }
 
+void MainWindow::setTimeText(double d, QLabel *label)
+{
+    QString td = QString::number(d, 'f', 1);
+    double y = d/12.0;
+    QString yd = QString::number(y, 'f', 1);
+
+    label->setText(QString(td).append(" (").append(yd).append(" yrs)"));
+}
+
+void MainWindow::setCostText(double d, QLabel *label)
+{
+    QString cd = QString::number(d, 'f', 2);
+    label->setText(QString("$").append(cd));
+}
+
 void MainWindow::runStats()
 {
     double a_monthsToDeath = 0.0;
@@ -190,26 +207,26 @@ void MainWindow::runStats()
 
     if (ui->avgMonthsToDeath_CB->isChecked())
     {
-        ui->avgMonthsToDeath->setText(QString::number(a_monthsToDeath));
-        ui->sdMonthsToDeath->setText(QString::number(sd_monthsToDeath));
+        setTimeText(a_monthsToDeath, ui->avgMonthsToDeath);
+        setTimeText(sd_monthsToDeath, ui->sdMonthsToDeath);
     }
 
     if (ui->avgTotalCost_CB->isChecked())
     {
-        ui->avgTotalCost->setText(QString::number(a_totalCost));
-        ui->sdTotalCost->setText(QString::number(sd_totalCost));
+        setCostText(a_totalCost, ui->avgTotalCost);
+        setCostText(sd_totalCost, ui->sdTotalCost);
     }
 
     if (ui->avgCostPerYear_CB->isChecked())
     {
-        ui->avgCostPerYear->setText(QString::number(a_costPerYear));
-        ui->sdCostPerYear->setText(QString::number(sd_costPerYear));
+        setCostText(a_costPerYear, ui->avgCostPerYear);
+        setCostText(sd_costPerYear, ui->sdCostPerYear);
     }
 
     if (ui->avgAgeAtDeath_CB->isChecked())
     {
-        ui->avgAgeAtDeath->setText(QString::number(a_ageAtDeath));
-        ui->sdAgeAtDeath->setText(QString::number(sd_ageAtDeath));
+        setTimeText(a_ageAtDeath, ui->avgAgeAtDeath);
+        setTimeText(sd_ageAtDeath, ui->sdAgeAtDeath);
     }
 
     update();

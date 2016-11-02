@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,9 @@ private:
     void parseFile();
     void showMessage(QString msgString);
     void saveFile(QString filename);
+
+    void setTimeText(double d, QLabel *label);
+    void setCostText(double d, QLabel *label);
 };
 
 #endif // MAINWINDOW_H
